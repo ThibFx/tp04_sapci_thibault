@@ -1,0 +1,96 @@
+<section class="users">
+  <header class="users__header">
+    <div>
+      <h2>Utilisateurs</h2>
+      <p>Créez, listez et supprimez les comptes autorisés à déclarer.</p>
+    </div>
+    <button type="button" (click)="loadUsers()" [disabled]="isLoading()">
+      Rafraîchir
+    </button>
+  </header>
+
+  <form class="users__form" [formGroup]="form" (ngSubmit)="submit()">
+    <div class="field">
+      <label for="nom">Nom</label>
+      <input id="nom" type="text" formControlName="nom" />
+    </div>
+    <div class="field">
+      <label for="prenom">Prénom</label>
+      <input id="prenom" type="text" formControlName="prenom" />
+    </div>
+    <div class="field">
+      <label for="email">Email</label>
+      <input id="email" type="email" formControlName="email" />
+    </div>
+    <div class="field">
+      <label for="login">Login</label>
+      <input id="login" type="text" formControlName="login" />
+    </div>
+    <div class="field">
+      <label for="password">Mot de passe</label>
+      <input id="password" type="password" formControlName="password" />
+    </div>
+    <button
+      class="primary"
+      type="submit"
+      [disabled]="form.invalid || isSubmitting()"
+    >
+      {{ isSubmitting() ? 'Création...' : 'Ajouter un utilisateur' }}
+    </button>
+  </form>
+
+  <p class="success" *ngIf="success()">{{ success() }}</p>
+  <p class="error" *ngIf="error()">{{ error() }}</p>
+
+  <div class="users__list" *ngIf="hasUsers(); else emptyState">
+    <table>
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Prénom</th>
+          <th>Email</th>
+          <th>Login</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users()">
+          <td>{{ user.nom }}</td>
+          <td>{{ user.prenom }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.login }}</td>
+          <td class="actions">
+            <button type="button" class="danger" (click)="delete(user)">
+              Supprimer
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <ng-template #emptyState>
+    <p class="empty">Aucun utilisateur enregistré pour le moment.</p>
+  </ng-template>
+
+  <section class="users__login">
+    <h3>Tester l'authentification</h3>
+    <form [formGroup]="loginForm" (ngSubmit)="testLogin()">
+      <div class="field">
+        <label for="login-identifiant">Login</label>
+        <input id="login-identifiant" type="text" formControlName="login" />
+      </div>
+      <div class="field">
+        <label for="login-password">Mot de passe</label>
+        <input id="login-password" type="password" formControlName="password" />
+      </div>
+      <button type="submit" class="primary" [disabled]="loginForm.invalid || isAuthenticating()">
+        {{ isAuthenticating() ? 'Connexion...' : 'Se connecter' }}
+      </button>
+    </form>
+    <p class="success" *ngIf="authenticatedUser()">
+      Bonjour {{ authenticatedUser()?.prenom }} {{ authenticatedUser()?.nom }} ({{ authenticatedUser()?.email }})
+    </p>
+    <p class="error" *ngIf="loginError()">{{ loginError() }}</p>
+  </section>
+</section>
